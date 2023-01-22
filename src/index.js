@@ -2,30 +2,52 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 
-class Square extends React.Component {
-    constructor(props) {
-        super(props); // In JavaScript classes, you need to always call super when defining the constructor of a subclass. All React component classes that have a constructor should start with a super(props) call.
-        this.state = { value: null, };
-    }
-    render() {
-        return (
-            <button className="square"
-                onClick={() => this.setState({ value: 'X' })}>
-                {this.state.value}
-            </button>
-        );
-    }
+// class Square extends React.Component {
+//     render() {
+//         return (
+//             <button className="square"
+//                 onClick={() => this.props.onClick({ value: 'X' })}>
+//                 {this.props.value}
+//             </button>
+//         );
+//     }
+// }
+
+
+function Square(props) {
+    return (
+        <button button className="square" onClick={props.onClick} > {props.value}</button>
+    );
 }
 
-// Making an Interactive Component
+// Lifting State Up
+// converting Square Class into function
+// Taking Turns
 
 class Board extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            squares: Array(9).fill(null),
+            xIsNext: true,
+        }
+    }
+    handleClick(i) {
+        const squares = this.state.squares.slice();
+        squares[i] = this.state.xIsNext ? 'X' : 'O';
+        this.setState({
+            squares: squares,
+            xIsNext: !this.state.xIsNext,
+        });
+    }
     renderSquare(i) {
-        return <Square />;
+        return <Square value={this.state.squares[i]}
+            onClick={() => this.handleClick(i)}
+        />;
     }
 
     render() {
-        const status = 'Next player: X';
+        const status = 'Next player:' + (this.state.xIsNext ? 'X' : 'O');
 
         return (
             <div>
